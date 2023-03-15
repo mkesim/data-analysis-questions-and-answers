@@ -1,0 +1,38 @@
+"""
+Code Implementation Task: If this list would be a database table, please provide SQL query to fill in the missing daily vaccination numbers with discrete median of country as similar to question a.  
+Please  provide the link to your code as answer to this question. 
+Note: This time SQL equivalent is requested, and imputation value is median of each country, not minimum. Please remember filling countries with zero if they do not have any valid daily_vaccination records like Kuwait
+
+"""
+
+CREATE TABLE country_vaccination_stats (
+  country VARCHAR(50),
+  date DATE,
+  daily_vaccinations INT,
+  total_vaccinations INT
+);
+
+INSERT INTO country_vaccination_stats VALUES
+('Argentina', '12/29/2020', NULL, 700),
+('Argentina', '12/30/2020', 15656, NULL),
+('Argentina', '12/31/2020', NULL, NULL),
+('Austria', '12/27/2020', NULL, 309),
+('Austria', '12/28/2020', NULL, NULL),
+('Austria', '12/29/2020', 3368, NULL),
+('Bahrain', '12/23/2020', NULL, 3896),
+('Bahrain', '12/24/2020', 2579, NULL),
+('Bahrain', '12/25/2020', NULL, NULL);
+
+UPDATE country_vaccination_stats c1 SET daily_vaccinations = (
+    -- Select the median value for each country using percentile_cont function
+    SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY c2.daily_vaccinations) AS median
+    FROM country_vaccination_stats c2 
+    WHERE c2.country = c1.country AND c2.daily_vaccinations IS NOT NULL -- Ignore null values
+)
+WHERE daily_vaccinations IS NULL; -- Only update null values
+
+UPDATE country_vaccination_stats SET daily_vaccinations = 0 
+WHERE daily_vaccinations IS NULL;
+
+SELECT * FROM country_vaccination_stats;
+

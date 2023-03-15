@@ -1,0 +1,16 @@
+"""
+What is the number of total vaccinations done on 1/6/2021 (MM/DD/YYYY) by considering missing values imputed version of dataset? Please  just provide the number as answer.
+
+"""
+
+import pandas as pd
+df = pd.read_csv('country_vaccination_stats.csv')
+df['daily_vaccinations'] = df['daily_vaccinations'].fillna(0)
+df['daily_vaccinations'] = df.groupby('country')['daily_vaccinations'].transform(lambda x: x.fillna(x.min()))
+df['date'] = pd.to_datetime(df['date'])
+df_date = df[df['date'] == '2021-01-06']
+total_vaccinations = df_date['total_vaccinations'].sum()
+print(total_vaccinations)
+
+#Answer is 30843132.0
+
