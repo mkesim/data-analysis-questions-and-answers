@@ -1,0 +1,28 @@
+import xml.etree.ElementTree as ET
+
+data_table = [
+    ("AX0145", "<url>https://xcd32112.smart_meter.com</url>"),
+    ("TRU151", "<url>http://tXh67.dia_meter.com</url>"),
+    ("ZOD231", "<url>http://yTS495.smart_meter.com</url>"),
+    ("YRT326", "<url>https://ret323_TRu.crown.oom</url>"),
+    ("LWR245", "<url>https://luwr3243.celcius.com</url>")
+]
+
+pure_urls = []
+
+for device_type, stats_access_link in data_table:
+    
+    root = ET.fromstring(stats_access_link)
+    
+    url_tag = root.find("url")
+    
+    full_url = url_tag.text
+    
+    pure_url = full_url.split("//")[1]
+    
+    pure_urls.append((device_type, pure_url))
+
+print(pure_urls)
+
+
+#Output: [('AX0145', 'xcd32112.smart_meter.com'), ('TRU151', 'tXh67.dia_meter.com'), ('ZOD231', 'yTS495.smart_meter.com'), ('YRT326', 'ret323_TRu.crown.oom'), ('LWR245', 'luwr3243.celcius.com')]
